@@ -26,7 +26,7 @@ function Usuarios() {
 
   const eliminarUsuario = async (id) => {
     try {
-      await axios.delete(`${getApi}/Usuarios/${id}`, {
+      await axios.delete(`${getApi}/Usuario/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       cargarUsuarios();
