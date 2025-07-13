@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsuarioModal from '../components/UsuarioModal';
 import { getApiUrl } from '../auth/helpers';
+import alertify from 'alertifyjs';
 
 function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -21,6 +22,7 @@ function Usuarios() {
       setUsuarios(res.data.result || []);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
+      alertify.error('Error al cargar usuarios.');
     }
   };
 
@@ -29,9 +31,12 @@ function Usuarios() {
       await axios.delete(`${getApi}/Usuario/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
+      alertify.success('Usuario eliminado correctamente.');
       cargarUsuarios();
     } catch (error) {
       console.error('Error al eliminar usuario:', error);
+      const mensaje = error.response?.data?.message || 'No se pudo eliminar el usuario.';
+      alertify.error(mensaje);
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getApiUrl } from '../auth/helpers';
 import RolModal from '../components/RolModal';
+import alertify from 'alertifyjs';
 
 function Roles() {
   const [roles, setRoles] = useState([]);
@@ -21,6 +22,7 @@ function Roles() {
       setRoles(res.data.result || []);
     } catch (error) {
       console.error('Error al cargar roles:', error);
+      alertify.error('Error al cargar los roles.');
     }
   };
 
@@ -29,9 +31,12 @@ function Roles() {
       await axios.delete(`${getApi}/Rol/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
+      alertify.success('Rol eliminado correctamente.');
       cargarRoles();
     } catch (error) {
       console.error('Error al eliminar rol:', error);
+      const mensaje = error.response?.data?.message || 'No se pudo eliminar el rol.';
+      alertify.error(mensaje);
     }
   };
 

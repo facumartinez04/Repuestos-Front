@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import RepuestoModal from '../components/RepuestoModal';
 import { getApiUrl } from '../auth/helpers';
-import { useContext } from 'react';
 import { AuthContext } from '../auth/AuthContext';
+import alertify from 'alertifyjs';
 
 function Repuestos() {
   const { state } = useContext(AuthContext);
@@ -13,7 +13,6 @@ function Repuestos() {
   const [repuestoActual, setRepuestoActual] = useState(null);
   const getApi = getApiUrl();
 
-  // Filtros
   const [filtroNombre, setFiltroNombre] = useState('');
   const [filtroMarca, setFiltroMarca] = useState('');
   const [filtroCategoria, setFiltroCategoria] = useState('');
@@ -36,6 +35,7 @@ function Repuestos() {
       setRepuestosFiltrados(data);
     } catch (error) {
       console.error('Error al cargar repuestos:', error);
+      alertify.error('Error al cargar los repuestos.');
     }
   };
 
@@ -65,9 +65,12 @@ function Repuestos() {
       await axios.delete(`${getApi}/Repuesto/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
+      alertify.success('Repuesto eliminado correctamente.');
       cargarRepuestos();
     } catch (error) {
       console.error('Error al eliminar repuesto:', error);
+      const mensaje = error.response?.data?.message || 'No se pudo eliminar el repuesto.';
+      alertify.error(mensaje);
     }
   };
 
@@ -91,7 +94,7 @@ function Repuestos() {
         ) : null}
       </div>
 
-      {/* Filtros */}
+      {}
       <div className="card p-3 mb-3">
         <div className="row g-3">
           <div className="col-md-4">

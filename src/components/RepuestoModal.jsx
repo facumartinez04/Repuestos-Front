@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { getApiUrl } from '../auth/helpers';
+import alertify from 'alertifyjs';
 
 function RepuestoModal({ show, onHide, repuesto, recargar }) {
   const [id, setId] = useState(null);
@@ -62,15 +63,19 @@ function RepuestoModal({ show, onHide, repuesto, recargar }) {
         await axios.put(`${getApi}/Repuesto/${id}`, data, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
+        alertify.success('Repuesto actualizado correctamente.');
       } else {
         await axios.post(`${getApi}/Repuesto`, data, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
+        alertify.success('Repuesto creado exitosamente.');
       }
       recargar();
       onHide();
     } catch (error) {
       console.error('Error al guardar repuesto:', error);
+      const mensaje = error.response?.data?.message || 'Error al guardar el repuesto.';
+      alertify.error(mensaje);
     }
   };
 

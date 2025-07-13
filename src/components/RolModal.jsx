@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { getApiUrl } from '../auth/helpers';
+import alertify from 'alertifyjs';
 
 export default function RolModal({ show, onHide, rol, recargar }) {
   const getApi = getApiUrl();
@@ -41,6 +42,7 @@ export default function RolModal({ show, onHide, rol, recargar }) {
       setPermisosDisponibles(res.data.result || []);
     } catch (error) {
       console.error('Error al cargar permisos:', error);
+      alertify.error('Error al cargar permisos disponibles.');
     }
   };
 
@@ -53,6 +55,7 @@ export default function RolModal({ show, onHide, rol, recargar }) {
       setPermisosSeleccionados(permisos.map(p => p.idPermiso));
     } catch (error) {
       console.error('Error al cargar permisos del rol:', error);
+      alertify.error('Error al cargar los permisos del rol.');
     }
   };
 
@@ -76,7 +79,7 @@ export default function RolModal({ show, onHide, rol, recargar }) {
     if (!validarCampos()) return;
 
     const data = {
-      idRol : id,
+      idRol: id,
       descripcion: nombre,
       listaPermisos: permisosSeleccionados.map(idPermiso => ({ idRol: id, idPermiso }))
     };
@@ -86,10 +89,12 @@ export default function RolModal({ show, onHide, rol, recargar }) {
         await axios.put(`${getApi}/Rol/${id}`, data, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
+        alertify.success('Rol actualizado correctamente.');
       } else {
         await axios.post(`${getApi}/Rol`, data, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
+        alertify.success('Rol creado exitosamente.');
       }
 
       recargar();
@@ -97,6 +102,7 @@ export default function RolModal({ show, onHide, rol, recargar }) {
       limpiarFormulario();
     } catch (error) {
       console.error('Error al guardar rol:', error);
+      alertify.error('Ocurrió un error al guardar el rol.');
     }
   };
 
@@ -117,10 +123,11 @@ export default function RolModal({ show, onHide, rol, recargar }) {
             />
             <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
           </Form.Group>
+
           {rol && (
             <Form.Group className="mb-2">
               <Form.Label>Permisos</Form.Label>
-              { permisosDisponibles.map(permiso => (
+              {permisosDisponibles.map(permiso => (
                 <Form.Check
                   key={permiso.id}
                   type="checkbox"
@@ -130,7 +137,6 @@ export default function RolModal({ show, onHide, rol, recargar }) {
                 />
               ))}
             </Form.Group>
-
           )}
         </Form>
       </Modal.Body>
@@ -145,4 +151,3 @@ export default function RolModal({ show, onHide, rol, recargar }) {
     </Modal>
   );
 }
-
