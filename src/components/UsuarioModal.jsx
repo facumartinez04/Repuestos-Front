@@ -201,30 +201,34 @@ function UsuarioModal({ show, onHide, usuario, recargar }) {
             />
             <Form.Control.Feedback type="invalid">{errores.clave}</Form.Control.Feedback>
           </Form.Group>
-          <Form.Group className="mb-2">
-            <Form.Label>Roles</Form.Label>
-            {rolesDisponibles.map(rol => (
-              <Form.Check
-                key={rol.id}
-                type="checkbox"
-                label={rol.descripcion}
-                checked={rolesSeleccionados.includes(rol.id)}
-                onChange={() => manejarCambioRol(rol.id)}
-              />
-            ))}
-          </Form.Group>
-          <Form.Group className="mb-2">
-            <Form.Label>Permisos</Form.Label>
-            {permisosDisponibles.map(permiso => (
-              <Form.Check
-                key={permiso.id}
-                type="checkbox"
-                label={`${permiso.nombrePermiso} (${permiso.dataKey})`}
-                checked={permisosSeleccionados.includes(permiso.id)}
-                onChange={() => togglePermiso(permiso.id)}
-              />
-            ))}
-          </Form.Group>
+          {usuario && (
+            <>
+                  <Form.Group className="mb-2">
+                  <Form.Label>Roles</Form.Label>
+                  {rolesDisponibles.map(rol => (
+                    <Form.Check
+                      key={rol.id}
+                      type="checkbox"
+                      label={rol.descripcion}
+                      checked={rolesSeleccionados.includes(rol.id)}
+                      onChange={() => manejarCambioRol(rol.id)}
+                    />
+                  ))}
+                </Form.Group>
+                <Form.Group className="mb-2">
+                  <Form.Label>Permisos</Form.Label>
+                  {permisosDisponibles.map(permiso => (
+                    <Form.Check
+                      key={permiso.id}
+                      type="checkbox"
+                      label={`${permiso.nombrePermiso} (${permiso.dataKey})`}
+                      checked={permisosSeleccionados.includes(permiso.id)}
+                      onChange={() => togglePermiso(permiso.id)}
+                    />
+                  ))}
+                </Form.Group>
+              </>
+          )}
         </Form>
       </Modal.Body>
       <Modal.Footer>
