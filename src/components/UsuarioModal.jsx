@@ -23,8 +23,7 @@ function UsuarioModal({ show, onHide, usuario, recargar }) {
   const [errores, setErrores] = useState({});
 
   useEffect(() => {
-    if (!state.roles.some(r => r.descripcion?.includes('Administrador')) &&
-        !state.permisos.some(p => p.dataKey === 'usuario.modulo')) {
+    if (!state.roles.some(r => r.descripcion?.includes('Administrador') || state.permisos.some(p => p.dataKey === 'usuario.modulo'))) {
       navigate('/repuestos');
     }
   }, [state.roles, navigate]);
