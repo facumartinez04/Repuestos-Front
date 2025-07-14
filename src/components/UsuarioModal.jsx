@@ -23,7 +23,8 @@ function UsuarioModal({ show, onHide, usuario, recargar }) {
   const [errores, setErrores] = useState({});
 
   useEffect(() => {
-    if (!state.roles.some(r => r.descripcion?.includes('Administrador') || state.permisos.some(p => p.dataKey === 'usuario.modulo'))) {
+    if (!state.roles.some(r => r.descripcion?.includes('Administrador')) &&
+        !state.permisos.some(p => p.dataKey === 'usuario.modulo')) {
       navigate('/repuestos');
     }
   }, [state.roles, navigate]);
@@ -123,8 +124,14 @@ function UsuarioModal({ show, onHide, usuario, recargar }) {
 
   const validarCampos = () => {
     const nuevosErrores = {};
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!nombreUsuario.trim()) nuevosErrores.nombreUsuario = "El nombre de usuario es obligatorio";
-    if (!email.trim()) nuevosErrores.email = "El email es obligatorio";
+    if (!email.trim()) {
+      nuevosErrores.email = "El email es obligatorio";
+    } else if (!regexEmail.test(email.trim())) {
+      nuevosErrores.email = "El email no tiene un formato válido";
+    }
     if (!usuario && !clave.trim()) nuevosErrores.clave = "La contraseña es obligatoria al crear";
 
     setErrores(nuevosErrores);
@@ -201,33 +208,34 @@ function UsuarioModal({ show, onHide, usuario, recargar }) {
             />
             <Form.Control.Feedback type="invalid">{errores.clave}</Form.Control.Feedback>
           </Form.Group>
+
           {usuario && (
             <>
-                  <Form.Group className="mb-2">
-                  <Form.Label>Roles</Form.Label>
-                  {rolesDisponibles.map(rol => (
-                    <Form.Check
-                      key={rol.id}
-                      type="checkbox"
-                      label={rol.descripcion}
-                      checked={rolesSeleccionados.includes(rol.id)}
-                      onChange={() => manejarCambioRol(rol.id)}
-                    />
-                  ))}
-                </Form.Group>
-                <Form.Group className="mb-2">
-                  <Form.Label>Permisos</Form.Label>
-                  {permisosDisponibles.map(permiso => (
-                    <Form.Check
-                      key={permiso.id}
-                      type="checkbox"
-                      label={`${permiso.nombrePermiso} (${permiso.dataKey})`}
-                      checked={permisosSeleccionados.includes(permiso.id)}
-                      onChange={() => togglePermiso(permiso.id)}
-                    />
-                  ))}
-                </Form.Group>
-              </>
+              <Form.Group className="mb-2">
+                <Form.Label>Roles</Form.Label>
+                {rolesDisponibles.map(rol => (
+                  <Form.Check
+                    key={rol.id}
+                    type="checkbox"
+                    label={rol.descripcion}
+                    checked={rolesSeleccionados.includes(rol.id)}
+                    onChange={() => manejarCambioRol(rol.id)}
+                  />
+                ))}
+              </Form.Group>
+              <Form.Group className="mb-2">
+                <Form.Label>Permisos</Form.Label>
+                {permisosDisponibles.map(permiso => (
+                  <Form.Check
+                    key={permiso.id}
+                    type="checkbox"
+                    label={`${permiso.nombrePermiso} (${permiso.dataKey})`}
+                    checked={permisosSeleccionados.includes(permiso.id)}
+                    onChange={() => togglePermiso(permiso.id)}
+                  />
+                ))}
+              </Form.Group>
+            </>
           )}
         </Form>
       </Modal.Body>
